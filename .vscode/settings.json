@@ -1,7 +1,10 @@
 {
     "typescript.surveys.enabled": false,
-    "javascript.validate.enable": false,
-    "js/ts.implicitProjectConfig.module": "ESNext",
-    "js/ts.implicitProjectConfig.experimentalDecorators": true,
-    "js/ts.implicitProjectConfig.target": "ES2020"
+    "editor.formatOnSave": true,
+    "eslint.alwaysShowStatus": true,
+    "[javascript]": {
+        "editor.formatOnSave": false,
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "json.schemas": []
 }

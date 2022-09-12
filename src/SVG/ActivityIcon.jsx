@@ -1,6 +1,6 @@
 import { Svg, Path } from 'react-native-svg';
 import PropTypes from 'prop-types';
-import styles from './styles.js';
+import styles from './styles';
 
 const ActivityIcon = ({ width, height, focused }) => {
     return (
