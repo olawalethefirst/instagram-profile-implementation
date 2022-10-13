@@ -1,82 +1,65 @@
-import React, { useState, useCallback, memo } from 'react';
-import { View, FlatList, Image } from 'react-native';
-import styles from './styles';
-import NestedLists from '../components/NestedLists';
-import ProfileScreenRow0 from '../components/ProfileScreenRow0';
-import ProfileScreenRow1 from '../components/ProfileScreenRow1';
-import ProfileScreenRow2 from '../components/ProfileScreenRow2';
+import React, { memo } from "react";
+import { ActivityIndicator, View } from "react-native";
+import styles from "./styles";
+import NestedLists from "../components/NestedLists";
+import ListHeader from "../components/ListHeader";
+import StickyHeaderIcon from "../components/StickyHeaderIcon";
+import usePosts from "../hooks/usePosts";
+import PostItem from "../components/PostItem";
+import ErrorModal from "../components/ErrorModal";
 
-const getColor = (nestedListIndex) => `rgb(${(121 * (nestedListIndex + 1) + 255) % 255}, ${
-  (99 * (nestedListIndex + 1) + 255) % 255
-}, ${(169 * (nestedListIndex + 1) + 255) % 255})`;
+const renderItem = ({ index, item }) => {
+  const { small } = item;
+  return <PostItem index={index} imageUri={small} />;
+};
 
-const ListItem = memo(({ item, parentIndex, index }) => (
-  <View
-    style={{
-      height: 100,
-      borderWidth: 1,
-      borderColor: '#fff',
-      backgroundColor: getColor(parentIndex),
-    }}
-
-  >
-    <Image />
-  </View>
-));
-
-const data = [
-  new Array(20).fill(1),
-  new Array(1).fill(1),
-  new Array(30).fill(1),
-  new Array(10).fill(1),
-  new Array(5).fill(1),
-];
-
-function TopComp() {
-  return (
-
-    <>
-      <ProfileScreenRow0 />
-      <View style={styles.profileScreenSpacer} />
-      <ProfileScreenRow1 />
-      <View style={styles.profileScreenSpacer} />
-      <ProfileScreenRow2 />
-      <View style={styles.profileScreenSpacer} />
-    </>
-  );
-}
+const nestedListKeyExtractor = (_, index) => `nestedList-${index}`;
+const listItemKeyExtractor = (item) => item.full;
 
 function ProfileScreen() {
-  const [refreshing, setRefreshing] = useState(false);
+  const [
+    data,
+    refreshing,
+    loadingMore,
+    errors,
+    onRefresh,
+    onEndReached,
+    deleteMostRecentError,
+  ] = usePosts(2);
 
-  const onRefresh = useCallback((i) => {
-    setRefreshing(true);
-    // console.log('refreshed a bitch');
-    setTimeout(() => {
-      // console.log('finished refreshing');
-      setRefreshing(false);
-    }, 1500);
-  }, []);
-
-  const renderItem = useCallback(({ item, parentIndex, index }) => (
-    <ListItem
-      key={`parentIndex-${parentIndex}index-${index}`}
-      item={item}
-      parentIndex={parentIndex}
-      index={index}
-    />
-  ), []);
-
-  // console.log('emi ti update ni temi', refreshing);
+  // eslint-disable-next-line react/prop-types
+  const NestedListFooter = memo(({ nestedListIndex }) =>
+    loadingMore[nestedListIndex] ? (
+      <ActivityIndicator style={styles.nestedListsFooter} color="#fff" />
+    ) : null
+  );
 
   return (
-    <NestedLists
-      HeaderComponent={TopComp}
-      data={data}
-      renderListItem={renderItem}
-      refreshing={refreshing}
-      onRefresh={onRefresh}
-    />
+    <View style={styles.container}>
+      <NestedLists
+        HeaderComponent={ListHeader}
+        data={data}
+        renderListItem={renderItem}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        headerContainerStyle={{ zIndex: 1 }}
+        nestedListContainerStyle={{ paddingTop: 60 }}
+        nestedListsStickyHeaderEnabled
+        listBackgroundColor="#000"
+        NestedListFooterComponent={NestedListFooter}
+        stickyHeaderScrollIndicatorColor="#fff"
+        nestedListContentContainerStyle={styles.nestedListContentContainerStyle}
+        StickyHeaderIcon={StickyHeaderIcon}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={1}
+        nestedListKeyExtractor={nestedListKeyExtractor}
+        listItemKeyExtractor={listItemKeyExtractor}
+      />
+      <ErrorModal
+        errors={errors}
+        deleteMostRecentError={deleteMostRecentError}
+      />
+    </View>
   );
 }
 

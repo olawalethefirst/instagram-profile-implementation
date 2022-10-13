@@ -4,40 +4,77 @@ import NestedVerticalList from "./NestedVerticalList";
 
 function NestedHorizontalList({
   data,
-  updateNestedListsLength,
-  topCompHeight,
-  translateYs,
-  renderNestedListItem,
-  totalViewWidth,
+  renderListItem,
+  useNestedVerticalListProp,
+  listItemKeyExtractor,
+  nestedListKeyExtractor,
+  NestedListHeaderComponent,
+  NestedListFooterComponent,
+  nestedListContentContainerStyle,
 }) {
   const renderNestedVerticalLists = useCallback(
-    (list, parentIndex) => (
+    (nestedListData, index) => (
       <NestedVerticalList
-        translateYs={translateYs}
-        index={parentIndex}
-        key={parentIndex}
-        topCompHeight={topCompHeight}
-        updateListLength={updateNestedListsLength}
-        totalViewWidth={totalViewWidth}
-      >
-        {list.map((item, index) =>
-          renderNestedListItem({ item, parentIndex, index })
-        )}
-      </NestedVerticalList>
+        key={
+          nestedListKeyExtractor
+            ? nestedListKeyExtractor(nestedListData, index)
+            : index
+        }
+        nestedListIndex={index}
+        data={nestedListData}
+        renderListItem={renderListItem}
+        listItemKeyExtractor={listItemKeyExtractor}
+        useNestedVerticalListProp={useNestedVerticalListProp}
+        NestedListHeaderComponent={NestedListHeaderComponent}
+        NestedListFooterComponent={NestedListFooterComponent}
+        nestedListContentContainerStyle={nestedListContentContainerStyle}
+      />
     ),
-    [renderNestedListItem, updateNestedListsLength, translateYs, topCompHeight]
+    [
+      renderListItem,
+      useNestedVerticalListProp,
+      listItemKeyExtractor,
+      nestedListKeyExtractor,
+      NestedListHeaderComponent,
+      NestedListFooterComponent,
+      nestedListContentContainerStyle,
+    ]
   );
 
-  return data.map(renderNestedVerticalLists);
+  return <>{data.map(renderNestedVerticalLists)}</>;
 }
 
+NestedHorizontalList.defaultProps = {
+  listItemKeyExtractor: null,
+  nestedListKeyExtractor: null,
+  NestedListFooterComponent: null,
+  NestedListHeaderComponent: null,
+};
+
 NestedHorizontalList.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)).isRequired,
-  updateNestedListsLength: PropTypes.func.isRequired,
-  topCompHeight: PropTypes.objectOf(PropTypes.number),
-  translateYs: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.number)),
-  renderNestedListItem: PropTypes.func.isRequired,
-  totalViewWidth: PropTypes.objectOf(PropTypes.number),
+  data: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.any)).isRequired,
+  renderListItem: PropTypes.func.isRequired,
+  useNestedVerticalListProp: PropTypes.objectOf(
+    PropTypes.oneOfType([
+      PropTypes.func,
+      PropTypes.objectOf(PropTypes.number),
+      PropTypes.objectOf(PropTypes.bool),
+    ])
+  ).isRequired,
+  listItemKeyExtractor: PropTypes.func,
+  nestedListKeyExtractor: PropTypes.func,
+  NestedListHeaderComponent: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.func,
+    PropTypes.object,
+  ]),
+  NestedListFooterComponent: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.func,
+    PropTypes.object,
+  ]),
+  // eslint-disable-next-line react/forbid-prop-types
+  nestedListContentContainerStyle: PropTypes.object.isRequired,
 };
 
 export default memo(NestedHorizontalList);

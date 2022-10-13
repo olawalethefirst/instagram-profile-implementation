@@ -4,7 +4,11 @@
         "es2021": true,
         "react-native/react-native": true
     },
-    "extends": ["airbnb", "plugin:prettier/recommended"],
+    "extends": [
+        "airbnb",
+        "plugin:prettier/recommended",
+        "plugin:react-hooks/recommended"
+    ],
     "parserOptions": {
         "ecmaFeatures": {
             "jsx": true

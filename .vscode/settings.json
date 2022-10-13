@@ -1,10 +1,12 @@
 {
-    "typescript.surveys.enabled": false,
-    "editor.formatOnSave": true,
-    "eslint.alwaysShowStatus": true,
-    "[javascript]": {
-        "editor.formatOnSave": false,
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-    },
-    "json.schemas": []
+  "typescript.surveys.enabled": false,
+  "editor.formatOnSave": true,
+  "eslint.alwaysShowStatus": true,
+  "[javascript]": {
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "json.schemas": [],
+  "eslint.format.enable": true,
+  "files.eol": "\n"
 }
