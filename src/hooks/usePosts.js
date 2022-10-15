@@ -6,6 +6,7 @@ import mapArrayWithUpdate from "../helperFunctions/mapArrayWithUpdate";
 // constants
 const USER_POSTS = "USER_POSTS";
 const TAGGED_POSTS = "TAGGED_POSTS";
+const STORIES = "STORIES";
 const POSTS_BATCH_COUNT = 15;
 const USER_POSTS_MAXIMUM_COUNT = 60;
 const TAGGED_POSTS_MAXIMUM_COUNT = 9;
@@ -20,12 +21,12 @@ const LOADING_MORE_SUCCESSFUL = "LOADING_MORE_SUCCESSFUL";
 const LOADING_MORE_UN_SUCCESSFUL = "LOADING_MORE_UN_SUCCESSFUL";
 const UPDATE_ERRORS = "UPDATE_ERROR";
 const DELETE_MOST_RECENT_ERROR = "DELETE_MOST_RECENT_ERROR";
+const UPDATE_STORIES = "UPDATE_STORIES";
 
 // helperFunctions
 
 // reducer
 const postsReducer = (state, { type, payload }) => {
-  console.log("reducer called");
   switch (type) {
     case UPDATE_DATA:
       return {
@@ -112,6 +113,11 @@ const postsReducer = (state, { type, payload }) => {
         ...state,
         errors: state.errors.slice(1),
       };
+    case UPDATE_STORIES:
+      return {
+        ...state,
+        stories: payload,
+      };
     default:
       throw new Error("invalid action");
   }
@@ -120,6 +126,7 @@ const postsReducer = (state, { type, payload }) => {
 function usePosts(nestedPostListCount) {
   const initialState = {
     data: new Array(nestedPostListCount).fill([]),
+    stories: [],
     refreshing: new Array(nestedPostListCount).fill(false),
     loadingMore: new Array(nestedPostListCount).fill(false),
     errors: [],
@@ -127,7 +134,7 @@ function usePosts(nestedPostListCount) {
 
   // state & dispatch
   const [state, dispatch] = useReducer(postsReducer, initialState);
-  const { data, loadingMore, refreshing, errors } = state;
+  const { data, loadingMore, refreshing, errors, stories } = state;
   const userPosts = data[0];
   const taggedPosts = data[1];
 
@@ -190,7 +197,24 @@ function usePosts(nestedPostListCount) {
     }
     throw new Error();
   }, [fetchPersistedDataAsync]);
-  const generatePostsAsync = useCallback(async (count) => {
+  const fetchPersistendStoriesAsync = useCallback(async () => {
+    const newStories = await fetchPersistedDataAsync(STORIES);
+    if (newStories.length > 0) {
+      return newStories;
+    }
+    throw new Error();
+  }, [fetchPersistedDataAsync]);
+  const updatePersistendStories = useCallback(
+    async (newStories) => {
+      try {
+        await updatePersistedDataAsync(STORIES, newStories);
+      } catch ({ message }) {
+        updateErrors(message);
+      }
+    },
+    [updatePersistedDataAsync, updateErrors]
+  );
+  const generatePicturesAsync = useCallback(async (count) => {
     const rawPosts = await fetchRandomPhotosAsync(count);
     return rawPosts.map((postObj) => postObj.urls);
   }, []);
@@ -200,7 +224,7 @@ function usePosts(nestedPostListCount) {
       newUserPosts = await fetchPersistedUserPostsAsync();
     } catch {
       try {
-        newUserPosts = await generatePostsAsync(getPostsCount(0));
+        newUserPosts = await generatePicturesAsync(getPostsCount(0));
       } catch ({ message }) {
         updateErrors(message);
       }
@@ -216,7 +240,7 @@ function usePosts(nestedPostListCount) {
     }
   }, [
     fetchPersistedUserPostsAsync,
-    generatePostsAsync,
+    generatePicturesAsync,
     updateErrors,
     getPostsCount,
   ]);
@@ -226,7 +250,7 @@ function usePosts(nestedPostListCount) {
       newTaggedPosts = await fetchPersistedTaggedPostsAsync();
     } catch {
       try {
-        newTaggedPosts = await generatePostsAsync(getPostsCount(1));
+        newTaggedPosts = await generatePicturesAsync(getPostsCount(1));
       } catch ({ message }) {
         updateErrors(message);
       }
@@ -242,14 +266,33 @@ function usePosts(nestedPostListCount) {
     }
   }, [
     fetchPersistedTaggedPostsAsync,
-    generatePostsAsync,
+    generatePicturesAsync,
     updateErrors,
     getPostsCount,
   ]);
+  const fetchStoriesOnMount = useCallback(async () => {
+    let newStories;
+    try {
+      newStories = await fetchPersistendStoriesAsync();
+    } catch {
+      try {
+        newStories = await generatePicturesAsync(10);
+      } catch ({ message }) {
+        updateErrors(message);
+      }
+    }
+    if (newStories) {
+      dispatch({
+        type: UPDATE_STORIES,
+        payload: newStories,
+      });
+    }
+  }, [fetchPersistendStoriesAsync, generatePicturesAsync, updateErrors]);
   const onListMount = useCallback(() => {
     fetchUserPostsOnMount();
     fetchTaggedPostsOnMount();
-  }, [fetchUserPostsOnMount, fetchTaggedPostsOnMount]);
+    fetchStoriesOnMount();
+  }, [fetchUserPostsOnMount, fetchTaggedPostsOnMount, fetchStoriesOnMount]);
   const onRefresh = useCallback(
     async (listIndex) => {
       dispatch({
@@ -257,7 +300,7 @@ function usePosts(nestedPostListCount) {
         payload: { listIndex },
       });
       try {
-        const newNestedData = await generatePostsAsync(
+        const newNestedData = await generatePicturesAsync(
           getPostsCount(listIndex)
         );
         dispatch({
@@ -277,7 +320,7 @@ function usePosts(nestedPostListCount) {
         });
       }
     },
-    [getPostsCount, generatePostsAsync]
+    [getPostsCount, generatePicturesAsync]
   );
   const onEndReached = useCallback(
     async (listIndex) => {
@@ -289,7 +332,7 @@ function usePosts(nestedPostListCount) {
             payload: { listIndex },
           });
           try {
-            const newNestedData = await generatePostsAsync(
+            const newNestedData = await generatePicturesAsync(
               getPostsCount(listIndex, data, true)
             );
             setTimeout(() => {
@@ -313,7 +356,7 @@ function usePosts(nestedPostListCount) {
         }
       }
     },
-    [loadingMore, data, getPostsCount, generatePostsAsync]
+    [loadingMore, data, getPostsCount, generatePicturesAsync]
   );
   const deleteMostRecentError = useCallback(() => {
     dispatch({
@@ -333,6 +376,9 @@ function usePosts(nestedPostListCount) {
   useEffect(() => {
     updatePersistedTaggedPosts(taggedPosts);
   }, [taggedPosts, updatePersistedTaggedPosts]);
+  useEffect(() => {
+    updatePersistendStories(stories);
+  }, [stories, updatePersistendStories]);
 
   // useEffect(() => {
   //   const timer = setTimeout(
@@ -349,6 +395,7 @@ function usePosts(nestedPostListCount) {
 
   return [
     data,
+    stories,
     refreshing,
     loadingMore,
     errors,

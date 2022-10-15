@@ -6,11 +6,11 @@ import styles from "./styles";
 import isMiddlePostItem from "../helperFunctions/isMiddlePostItem";
 import { postItemMargin } from "../constants";
 
-function PostItem({ index, imageUri }) {
+function PostItem({ index, imageUri, navigateToViewPostWithParams }) {
   return (
     <TouchableOpacity
       activeOpacity={0.7}
-      onPress={(e) => console.log("pressed me", e)}
+      onPress={navigateToViewPostWithParams}
     >
       <Image
         style={[
@@ -28,6 +28,7 @@ function PostItem({ index, imageUri }) {
 PostItem.propTypes = {
   index: PropTypes.number.isRequired,
   imageUri: PropTypes.string.isRequired,
+  navigateToViewPostWithParams: PropTypes.func.isRequired,
 };
 
 export default memo(PostItem);

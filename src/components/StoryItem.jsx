@@ -1,12 +1,11 @@
 import { View, Image, Text } from "react-native";
+import { memo } from "react";
 import PropTypes from "prop-types";
 import styles from "./styles";
-import { storyPathParser, storyCaptionParser } from "../constants";
 import PlusIcon2 from "../SVG/PlusIcon2";
 import TextButton from "./TextButton";
 
-function StoryItem({ index }) {
-  const last = index === 10;
+function StoryItem({ index, uri }) {
   return (
     <TextButton style={styles.storyItemContainer}>
       <View
@@ -24,33 +23,34 @@ function StoryItem({ index }) {
             styles.backgroundColorBlack,
           ]}
         >
-          {!last && (
-            <Image
-              style={styles.storyItemImage}
-              source={storyPathParser(index)}
-            />
-          )}
-          {last && <PlusIcon2 size={20} stroke={1} />}
+          {uri && <Image style={styles.storyItemImage} source={{ uri }} />}
+          {!uri && <PlusIcon2 size={20} stroke={1} />}
         </View>
       </View>
       <Text
         numberOfLines={1}
         style={[
-          styles.fontSize13,
+          styles.fontSize11,
           styles.marginTop8,
           styles.whiteText,
           styles.textAlignCenter,
         ]}
         ellipsizeMode="tail"
       >
-        {storyCaptionParser(index)}
+        {index ?? "New"}
       </Text>
     </TextButton>
   );
 }
 
-StoryItem.propTypes = {
-  index: PropTypes.number,
+StoryItem.defaultProps = {
+  uri: null,
+  index: null,
 };
 
-export default StoryItem;
+StoryItem.propTypes = {
+  index: PropTypes.number,
+  uri: PropTypes.string,
+};
+
+export default memo(StoryItem);

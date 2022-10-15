@@ -1,9 +1,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "../screens/HomeScreen";
-import SearchScreen from "../screens/SearchScreen";
-import ReelsScreen from "../screens/ReelsScreen";
-import ActivityScreen from "../screens/ActivityScreen";
-import ProfileScreen from "../screens/ProfileScreen";
+import HomeScreen from "../screens/Feed";
+import SearchScreen from "../screens/Search";
+import ReelsScreen from "../screens/Reels";
+import ActivityScreen from "../screens/Activity";
 import {
   Home,
   Search,
@@ -11,37 +10,36 @@ import {
   Activity,
   Profile,
   colorBlack,
-  headerHeight,
 } from "../constants";
-import Header from "../components/Header";
 import TabBarIcon from "../components/TabBarIcon";
+import ProfileStack from "./Profile";
 
 const Tab = createBottomTabNavigator();
 
-function TabNavigator() {
+function Root() {
   return (
     <Tab.Navigator
       initialRouteName={Profile}
       screenOptions={({ route: { name } }) => ({
-        header: Header,
-        tabBarIcon: (props) => <TabBarIcon {...props} name={name} />,
+        headerShown: false,
+        // eslint-disable-next-line react/prop-types, react/no-unstable-nested-components
+        tabBarIcon: ({ focused }) => (
+          <TabBarIcon focused={focused} name={name} />
+        ),
         tabBarStyle: {
           backgroundColor: colorBlack,
           borderTopColor: colorBlack,
         },
         tabBarShowLabel: false,
-        headerStyle: {
-          height: headerHeight,
-        },
       })}
     >
       <Tab.Screen name={Home} component={HomeScreen} />
       <Tab.Screen name={Search} component={SearchScreen} />
       <Tab.Screen name={Reels} component={ReelsScreen} />
       <Tab.Screen name={Activity} component={ActivityScreen} />
-      <Tab.Screen name={Profile} component={ProfileScreen} />
+      <Tab.Screen name={Profile} component={ProfileStack} />
     </Tab.Navigator>
   );
 }
 
-export default TabNavigator;
+export default Root;

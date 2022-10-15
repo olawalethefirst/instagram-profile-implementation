@@ -1,13 +1,13 @@
 // import "react-native-url-polyfill/auto";
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import TabNavigator from "./src/navigators/TabNavigator";
+import Root from "./src/navigators/Root";
 
 function App() {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        <TabNavigator />
+        <Root />
       </NavigationContainer>
     </SafeAreaProvider>
   );

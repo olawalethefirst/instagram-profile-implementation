@@ -30,8 +30,8 @@ const styles = StyleSheet.create({
   whiteText: {
     color: colorWhite,
   },
-  fontSize25: {
-    fontSize: 25,
+  fontSize24: {
+    fontSize: 24,
   },
   defaultDeviceFont: {
     fontFamily: deviceFont,
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   profileDetailsDuoText2: {
-    fontSize: 14.5,
+    fontSize: 12,
     fontFamily: deviceFont,
   },
   suggestFollowing: {
@@ -109,8 +109,8 @@ const styles = StyleSheet.create({
   marginTop16point5: {
     marginTop: 16.5,
   },
-  marginRight16point5: {
-    marginRight: 16.5,
+  marginRight13: {
+    marginRight: 13,
   },
   marginTop8: {
     marginTop: 8,
@@ -149,8 +149,8 @@ const styles = StyleSheet.create({
   storyItemContainer: {
     width: 72,
   },
-  fontSize13: {
-    fontSize: 13,
+  fontSize11: {
+    fontSize: 11,
   },
   positionAbsolute: {
     position: "absolute",
@@ -196,6 +196,31 @@ const styles = StyleSheet.create({
   },
   errorModalText: { color: "#fff", fontFamily: deviceFont, fontWeight: "600" },
   alertIcon: { marginRight: 15 },
+  viewPostHeaderContainer: {
+    elevation: 1,
+    shadowOffset: { width: 0, height: 1 },
+    shadowColor: "white",
+    shadowRadius: 1,
+    shadowOpacity: 0.15,
+    backgroundColor: "black",
+  },
+  viewPostHeaderTitle: {
+    color: color757575,
+    fontSize: 14,
+  },
+  viewPostHeaderSubTitle: {
+    fontWeight: "900",
+    fontSize: 17,
+  },
+  viewPostHeaderBackButton: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    width: 40,
+    zIndex: 1,
+    justifyContent: "center",
+    paddingLeft: 10,
+  },
 });
 
 export default styles;

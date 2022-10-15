@@ -1,61 +1,103 @@
 import { View, Text } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import PropTypes from "prop-types";
 import { SafeAreaView } from "react-native-safe-area-context";
+import EntypoIcon from "react-native-vector-icons/Entypo";
+import PropTypes from "prop-types";
 import styles from "./styles";
-import { Profile } from "../constants";
-import DownArrowIcon from "../SVG/DownArrowIcon";
+import { ProfileFeed, ViewPost, colorWhite } from "../constants";
 import HamburgerIcon from "../SVG/HamburgerIcon";
 import PlusIcon from "../SVG/PlusIcon";
 import TextButton from "./TextButton";
+import ViewPostHeaderBackIcon from "../SVG/ViewPostHeaderBackIcon";
 
-function Header({ route: { name } }) {
-  const title = name === Profile ? "olawalethefirst" : name;
-
+function Header({ route: { name, params }, navigation: { goBack } }) {
   return (
     <SafeAreaView
       edges={["top"]}
-      style={[
-        styles.headerWithStatusBarHeight,
-        styles.containerHorizontalPadding,
-        styles.backgroundColorBlack,
-        styles.flexDirectionRow,
-        styles.justifyContentSpaceBetween,
-      ]}
+      style={[styles.headerWithStatusBarHeight, styles.backgroundColorBlack]}
     >
       <StatusBar
+        // eslint-disable-next-line react/style-prop-object
         style="light"
         backgroundColor={styles.backgroundColorBlack.backgroundColor}
       />
-      <TextButton style={[styles.flexDirectionRow, styles.alignItemsCenter]}>
-        <Text
+      {name === ProfileFeed && (
+        <View
           style={[
-            styles.whiteText,
-            styles.defaultDeviceFont,
-            styles.fontSize25,
+            styles.justifyContentSpaceBetween,
+            styles.flex1,
+            styles.flexDirectionRow,
+            styles.containerHorizontalPadding,
           ]}
         >
-          {title}{" "}
-        </Text>
-        <View style={styles.marginTop4}>
-          <DownArrowIcon size={15} />
+          <TextButton
+            style={[styles.flexDirectionRow, styles.alignItemsCenter]}
+          >
+            <Text
+              style={[
+                styles.whiteText,
+                styles.defaultDeviceFont,
+                styles.fontSize24,
+              ]}
+            >
+              olawalethefirst
+            </Text>
+            <EntypoIcon
+              name="chevron-small-down"
+              size={18}
+              color={colorWhite}
+            />
+          </TextButton>
+          <View style={[styles.flexDirectionRow, styles.alignItemsCenter]}>
+            <TextButton style={styles.marginRight25}>
+              <PlusIcon height={25} width={25} />
+            </TextButton>
+            <TextButton>
+              <HamburgerIcon height={25} width={25} />
+            </TextButton>
+          </View>
         </View>
-      </TextButton>
-      <View style={[styles.flexDirectionRow, styles.alignItemsCenter]}>
-        <TextButton style={styles.marginRight25}>
-          <PlusIcon height={25} width={25} />
-        </TextButton>
-        <TextButton>
-          <HamburgerIcon height={25} width={25} />
-        </TextButton>
-      </View>
+      )}
+      {name === ViewPost && (
+        <View
+          style={[
+            styles.flex1,
+            styles.justifyContentCenter,
+            styles.viewPostHeaderContainer,
+          ]}
+        >
+          <TextButton onPress={goBack} style={styles.viewPostHeaderBackButton}>
+            <ViewPostHeaderBackIcon size={17} />
+          </TextButton>
+          <Text
+            style={[
+              styles.defaultDeviceFont,
+              styles.textAlignCenter,
+              styles.viewPostHeaderTitle,
+            ]}
+          >
+            OLAWALETHEFIRST
+          </Text>
+          <Text
+            style={[
+              styles.whiteText,
+              styles.defaultDeviceFont,
+              styles.textAlignCenter,
+              styles.viewPostHeaderSubTitle,
+            ]}
+          >
+            {params.post.type}
+          </Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
 
 Header.propTypes = {
-  name: PropTypes.string,
-  route: PropTypes.object,
+  route: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  navigation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))
+    .isRequired,
 };
 
 export default Header;
