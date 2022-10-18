@@ -6,7 +6,7 @@ import styles from "./styles";
 import isMiddlePostItem from "../helperFunctions/isMiddlePostItem";
 import { postItemMargin } from "../constants";
 
-function PostItem({ index, imageUri, navigateToViewPostWithParams }) {
+function PostItem({ index, uri, navigateToViewPostWithParams }) {
   return (
     <TouchableOpacity
       activeOpacity={0.7}
@@ -19,7 +19,7 @@ function PostItem({ index, imageUri, navigateToViewPostWithParams }) {
             marginHorizontal: isMiddlePostItem(index) ? postItemMargin : 0,
           },
         ]}
-        source={{ uri: imageUri }}
+        source={{ uri }}
       />
     </TouchableOpacity>
   );
@@ -27,7 +27,7 @@ function PostItem({ index, imageUri, navigateToViewPostWithParams }) {
 
 PostItem.propTypes = {
   index: PropTypes.number.isRequired,
-  imageUri: PropTypes.string.isRequired,
+  uri: PropTypes.string.isRequired,
   navigateToViewPostWithParams: PropTypes.func.isRequired,
 };
 

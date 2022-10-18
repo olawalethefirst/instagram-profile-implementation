@@ -12,6 +12,8 @@ import {
   postsHeaderHeight,
   postItemSize,
   postItemMargin,
+  storySize,
+  storyContainerSize,
 } from "../constants";
 
 const styles = StyleSheet.create({
@@ -119,9 +121,9 @@ const styles = StyleSheet.create({
     height: 38,
   },
   storyImageContainer1: {
-    height: 72,
-    width: 72,
-    borderRadius: 72 / 2,
+    height: storyContainerSize,
+    width: storyContainerSize,
+    borderRadius: storyContainerSize / 2,
     borderWidth: 1,
     borderColor: color5a5a5a,
   },
@@ -130,9 +132,9 @@ const styles = StyleSheet.create({
     padding: 3,
   },
   storyItemImage: {
-    height: 62,
-    width: 62,
-    borderRadius: 31,
+    height: storySize,
+    width: storySize,
+    borderRadius: storySize / 2,
   },
   width16point5: {
     width: 16.5,
@@ -220,6 +222,18 @@ const styles = StyleSheet.create({
     zIndex: 1,
     justifyContent: "center",
     paddingLeft: 10,
+  },
+  fontSize16: {
+    fontSize: 16,
+  },
+  profilePostHeaderProfileImage: {
+    width: 35,
+    aspectRatio: 1,
+    borderRadius: 17.5,
+    marginRight: 12,
+  },
+  marginRight20: {
+    marginRight: 20,
   },
 });
 

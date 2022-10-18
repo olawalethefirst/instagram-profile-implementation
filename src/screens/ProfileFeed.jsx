@@ -1,21 +1,28 @@
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback, useContext } from "react";
 import { ActivityIndicator, View } from "react-native";
 import PropTypes from "prop-types";
 import styles from "./styles";
 import NestedLists from "../components/NestedLists";
 import ListHeader from "../components/ListHeader";
 import StickyHeaderIcon from "../components/StickyHeaderIcon";
-import usePosts from "../hooks/usePosts";
 import PostItem from "../components/PostItem";
 import ErrorModal from "../components/ErrorModal";
-import { ViewPost } from "../constants";
+import {
+  ViewProfilePost,
+  postItemSize,
+  colorBlack,
+  colorWhite,
+} from "../constants";
+import { ProfilePostsContext } from "../providers/ProfilePostsProvider";
+import generateImageUri from "../helperFunctions/generateImageUri";
 
 const nestedListKeyExtractor = (_, index) => `nestedList-${index}`;
-const listItemKeyExtractor = (item) => item.full;
+const listItemKeyExtractor = (item, index, nestedListIndex) =>
+  item.urls.full + index + nestedListIndex;
 
 function ProfileFeed({ navigation: { navigate } }) {
-  const [
-    data,
+  const {
+    posts,
     stories,
     refreshing,
     loadingMore,
@@ -23,25 +30,31 @@ function ProfileFeed({ navigation: { navigate } }) {
     onRefresh,
     onEndReached,
     deleteMostRecentError,
-  ] = usePosts(2);
+  } = useContext(ProfilePostsContext);
 
   // helperFunctions
   const navigateToViewPost = useCallback(
-    (navigateToViewPostWithParams) =>
-      navigate(ViewPost, navigateToViewPostWithParams),
+    (params) => navigate(ViewProfilePost, params),
     [navigate]
   );
   const renderItem = useCallback(
     ({ nestedListIndex, index, item }) => {
-      const { small, full } = item;
+      const {
+        urls: { raw },
+      } = item;
+      const uri = generateImageUri(raw, postItemSize);
       const navigateToViewPostWithParams = () =>
         navigateToViewPost({
-          post: { type: nestedListIndex === 0 ? "Posts" : "Tagged", url: full },
+          post: {
+            nestedListIndex,
+            type: nestedListIndex === 0 ? "Posts" : "Tagged",
+            activeIndex: index,
+          },
         });
       return (
         <PostItem
           index={index}
-          imageUri={small}
+          uri={uri}
           navigateToViewPostWithParams={navigateToViewPostWithParams}
         />
       );
@@ -60,16 +73,14 @@ function ProfileFeed({ navigation: { navigate } }) {
     <View style={styles.container}>
       <NestedLists
         HeaderComponent={<ListHeader stories={stories} />}
-        data={data}
+        data={posts}
         renderListItem={renderItem}
         refreshing={refreshing}
         onRefresh={onRefresh}
-        headerContainerStyle={{ zIndex: 1 }}
-        nestedListContainerStyle={{ paddingTop: 60 }}
         nestedListsStickyHeaderEnabled
-        listBackgroundColor="#000"
+        listBackgroundColor={colorBlack}
         NestedListFooterComponent={NestedListFooter}
-        stickyHeaderScrollIndicatorColor="#fff"
+        stickyHeaderScrollIndicatorColor={colorWhite}
         nestedListContentContainerStyle={styles.nestedListContentContainerStyle}
         StickyHeaderIcon={StickyHeaderIcon}
         onEndReached={onEndReached}

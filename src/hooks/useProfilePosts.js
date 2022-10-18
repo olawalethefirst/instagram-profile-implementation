@@ -22,6 +22,8 @@ const LOADING_MORE_UN_SUCCESSFUL = "LOADING_MORE_UN_SUCCESSFUL";
 const UPDATE_ERRORS = "UPDATE_ERROR";
 const DELETE_MOST_RECENT_ERROR = "DELETE_MOST_RECENT_ERROR";
 const UPDATE_STORIES = "UPDATE_STORIES";
+const UPDATE_LIKED = "UPDATE_LIKED";
+const UPDATE_SAVED = "UPDATE_SAVED";
 
 // helperFunctions
 
@@ -31,8 +33,8 @@ const postsReducer = (state, { type, payload }) => {
     case UPDATE_DATA:
       return {
         ...state,
-        data: mapArrayWithUpdate(
-          state.data,
+        posts: mapArrayWithUpdate(
+          state.posts,
           payload.listIndex,
           payload.newNestedData
         ),
@@ -59,8 +61,8 @@ const postsReducer = (state, { type, payload }) => {
           payload.listIndex,
           false
         ),
-        data: mapArrayWithUpdate(
-          state.data,
+        posts: mapArrayWithUpdate(
+          state.posts,
           payload.listIndex,
           payload.newNestedData
         ),
@@ -92,10 +94,10 @@ const postsReducer = (state, { type, payload }) => {
           payload.listIndex,
           false
         ),
-        data: state.data.map((data, index) =>
+        posts: state.posts.map((posts, index) =>
           index === payload.listIndex
-            ? data.concat(payload.newNestedData)
-            : data
+            ? posts.concat(payload.newNestedData)
+            : posts
         ),
       };
     case LOADING_MORE_UN_SUCCESSFUL:
@@ -118,14 +120,40 @@ const postsReducer = (state, { type, payload }) => {
         ...state,
         stories: payload,
       };
+    case UPDATE_LIKED:
+      return {
+        ...state,
+        posts: state.posts.map((nestedPostList, nestedListIndex) =>
+          nestedListIndex === payload.listIndex
+            ? nestedPostList.map((item, itemIndex) =>
+                itemIndex === payload.index
+                  ? { ...item, liked: !item.liked }
+                  : item
+              )
+            : nestedPostList
+        ),
+      };
+    case UPDATE_SAVED:
+      return {
+        ...state,
+        posts: state.posts.map((nestedPostList, nestedListIndex) =>
+          nestedListIndex === payload.listIndex
+            ? nestedPostList.map((item, itemIndex) =>
+                itemIndex === payload.index
+                  ? { ...item, saved: !item.saved }
+                  : item
+              )
+            : nestedPostList
+        ),
+      };
     default:
       throw new Error("invalid action");
   }
 };
 
-function usePosts(nestedPostListCount) {
+function useProfilePosts(nestedPostListCount) {
   const initialState = {
-    data: new Array(nestedPostListCount).fill([]),
+    posts: new Array(nestedPostListCount).fill([]),
     stories: [],
     refreshing: new Array(nestedPostListCount).fill(false),
     loadingMore: new Array(nestedPostListCount).fill(false),
@@ -134,9 +162,9 @@ function usePosts(nestedPostListCount) {
 
   // state & dispatch
   const [state, dispatch] = useReducer(postsReducer, initialState);
-  const { data, loadingMore, refreshing, errors, stories } = state;
-  const userPosts = data[0];
-  const taggedPosts = data[1];
+  const { posts, loadingMore, refreshing, errors, stories } = state;
+  const userPosts = posts[0];
+  const taggedPosts = posts[1];
 
   // helperFunctions
   const getPostsCount = useCallback((listIndex, postData, loadingMorePost) => {
@@ -216,7 +244,11 @@ function usePosts(nestedPostListCount) {
   );
   const generatePicturesAsync = useCallback(async (count) => {
     const rawPosts = await fetchRandomPhotosAsync(count);
-    return rawPosts.map((postObj) => postObj.urls);
+    return rawPosts.map((postObj) => ({
+      urls: postObj.urls,
+      liked: false,
+      saved: false,
+    }));
   }, []);
   const fetchUserPostsOnMount = useCallback(async () => {
     let newUserPosts;
@@ -276,7 +308,8 @@ function usePosts(nestedPostListCount) {
       newStories = await fetchPersistendStoriesAsync();
     } catch {
       try {
-        newStories = await generatePicturesAsync(10);
+        const rawStories = await fetchRandomPhotosAsync(10);
+        newStories = rawStories.map((story) => story.urls);
       } catch ({ message }) {
         updateErrors(message);
       }
@@ -287,7 +320,7 @@ function usePosts(nestedPostListCount) {
         payload: newStories,
       });
     }
-  }, [fetchPersistendStoriesAsync, generatePicturesAsync, updateErrors]);
+  }, [fetchPersistendStoriesAsync, updateErrors]);
   const onListMount = useCallback(() => {
     fetchUserPostsOnMount();
     fetchTaggedPostsOnMount();
@@ -326,14 +359,14 @@ function usePosts(nestedPostListCount) {
     async (listIndex) => {
       // continue here DEBUG not calling
       if (!loadingMore[listIndex]) {
-        if (data[listIndex].length < postsMaxCount[listIndex]) {
+        if (posts[listIndex].length < postsMaxCount[listIndex]) {
           dispatch({
             type: ACTIVATE_LOADING_MORE,
             payload: { listIndex },
           });
           try {
             const newNestedData = await generatePicturesAsync(
-              getPostsCount(listIndex, data, true)
+              getPostsCount(listIndex, posts, true)
             );
             setTimeout(() => {
               dispatch({
@@ -356,16 +389,28 @@ function usePosts(nestedPostListCount) {
         }
       }
     },
-    [loadingMore, data, getPostsCount, generatePicturesAsync]
+    [loadingMore, posts, getPostsCount, generatePicturesAsync]
   );
   const deleteMostRecentError = useCallback(() => {
     dispatch({
       type: DELETE_MOST_RECENT_ERROR,
     });
   }, []);
+  const updateLiked = useCallback((index, listIndex) => {
+    dispatch({
+      type: UPDATE_LIKED,
+      payload: { index, listIndex },
+    });
+  }, []);
+  const updateSaved = useCallback((index, listIndex) => {
+    dispatch({
+      type: UPDATE_SAVED,
+      payload: { index, listIndex },
+    });
+  }, []);
 
   // effects
-  // set list data
+  // set list posts
   useEffect(() => {
     onListMount();
   }, [onListMount]);
@@ -393,8 +438,8 @@ function usePosts(nestedPostListCount) {
   //   return () => clearTimeout(timer);
   // }, []);
 
-  return [
-    data,
+  return {
+    posts,
     stories,
     refreshing,
     loadingMore,
@@ -402,7 +447,9 @@ function usePosts(nestedPostListCount) {
     onRefresh,
     onEndReached,
     deleteMostRecentError,
-  ];
+    updateLiked,
+    updateSaved,
+  };
 }
 
-export default usePosts;
+export default useProfilePosts;

@@ -4,13 +4,18 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import EntypoIcon from "react-native-vector-icons/Entypo";
 import PropTypes from "prop-types";
 import styles from "./styles";
-import { ProfileFeed, ViewPost, colorWhite } from "../constants";
-import HamburgerIcon from "../SVG/HamburgerIcon";
-import PlusIcon from "../SVG/PlusIcon";
+import {
+  ProfileFeed,
+  ViewProfilePost,
+  colorWhite,
+  username,
+} from "../constants";
+import HamburgerIcon from "../svg/HamburgerIcon";
+import PlusIcon from "../svg/PlusIcon";
 import TextButton from "./TextButton";
-import ViewPostHeaderBackIcon from "../SVG/ViewPostHeaderBackIcon";
+import ViewPostHeaderBackIcon from "../svg/ViewPostHeaderBackIcon";
 
-function Header({ route: { name, params }, navigation: { goBack } }) {
+function ProfileHeader({ route: { name, params }, navigation: { goBack } }) {
   return (
     <SafeAreaView
       edges={["top"]}
@@ -40,7 +45,7 @@ function Header({ route: { name, params }, navigation: { goBack } }) {
                 styles.fontSize24,
               ]}
             >
-              olawalethefirst
+              {username}
             </Text>
             <EntypoIcon
               name="chevron-small-down"
@@ -50,15 +55,15 @@ function Header({ route: { name, params }, navigation: { goBack } }) {
           </TextButton>
           <View style={[styles.flexDirectionRow, styles.alignItemsCenter]}>
             <TextButton style={styles.marginRight25}>
-              <PlusIcon height={25} width={25} />
+              <PlusIcon size={25} />
             </TextButton>
             <TextButton>
-              <HamburgerIcon height={25} width={25} />
+              <HamburgerIcon size={25} />
             </TextButton>
           </View>
         </View>
       )}
-      {name === ViewPost && (
+      {name === ViewProfilePost && (
         <View
           style={[
             styles.flex1,
@@ -76,7 +81,7 @@ function Header({ route: { name, params }, navigation: { goBack } }) {
               styles.viewPostHeaderTitle,
             ]}
           >
-            OLAWALETHEFIRST
+            {username.toLocaleUpperCase()}
           </Text>
           <Text
             style={[
@@ -94,10 +99,10 @@ function Header({ route: { name, params }, navigation: { goBack } }) {
   );
 }
 
-Header.propTypes = {
+ProfileHeader.propTypes = {
   route: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   navigation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))
     .isRequired,
 };
 
-export default Header;
+export default ProfileHeader;

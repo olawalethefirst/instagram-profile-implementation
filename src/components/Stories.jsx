@@ -3,13 +3,16 @@ import { memo } from "react";
 import PropTypes from "prop-types";
 import StoryItem from "./StoryItem";
 import styles from "./styles";
+import generateImageUri from "../helperFunctions/generateImageUri";
+import { storySize } from "../constants";
 
 function ItemSeparator() {
   return <View style={styles.width16point5} />;
 }
 const renderItem = ({ index, item }) => {
-  const { small } = item;
-  return <StoryItem index={index} uri={small} />;
+  const { raw } = item;
+  const uri = generateImageUri(raw, storySize);
+  return <StoryItem index={index} uri={uri} />;
 };
 
 function Stories({ data }) {

@@ -8,7 +8,7 @@ import Animated, {
 import { useState, useCallback, useEffect, memo } from "react";
 import PropTypes from "prop-types";
 import parseErrorMessage from "../helperFunctions/parseErrorMessage";
-import AlertIcon from "../SVG/AlertIcon";
+import AlertIcon from "../svg/AlertIcon";
 import styles from "./styles";
 
 function ErrorModal({ errors, deleteMostRecentError }) {

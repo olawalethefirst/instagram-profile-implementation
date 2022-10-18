@@ -2,7 +2,7 @@ import { View, Image, Text } from "react-native";
 import { memo } from "react";
 import PropTypes from "prop-types";
 import styles from "./styles";
-import PlusIcon2 from "../SVG/PlusIcon2";
+import PlusIcon2 from "../svg/PlusIcon2";
 import TextButton from "./TextButton";
 
 function StoryItem({ index, uri }) {

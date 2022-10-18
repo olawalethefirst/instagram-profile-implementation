@@ -2,7 +2,7 @@ import { Image } from "react-native";
 import React from "react";
 import PropTypes from "prop-types";
 
-const profileURL = require("../../assets/images/profilePicture.webp");
+const profileURL = require("../../assets/images/profile.webp");
 
 function ProfileImage({ style }) {
   return <Image style={style} source={profileURL} />;

@@ -85,11 +85,7 @@ function NestedLists({
               { backgroundColor: listBackgroundColor },
             ]}
           >
-            <View
-              // style={styles.zIndex1}
-              onLayout={updateHeaderHeight}
-              collapsable={false}
-            >
+            <View onLayout={updateHeaderHeight} collapsable={false}>
               <View collapsable={false}>
                 {isValidElement(HeaderComponent) ? (
                   HeaderComponent
@@ -100,9 +96,7 @@ function NestedLists({
             </View>
             <Animated.View
               style={[
-                // styles.stickyHeaderContainer,
                 styles.zIndex1,
-                // stickyHeaderAnimatedContainer,
                 {
                   backgroundColor: listBackgroundColor,
                 },
@@ -125,9 +119,7 @@ function NestedLists({
             <Animated.View
               collapsable={false}
               style={[
-                {
-                  flexDirection: "row",
-                },
+                styles.flexDirectionRow,
                 horizontalListAnimatedContainerStyle,
               ]}
             >

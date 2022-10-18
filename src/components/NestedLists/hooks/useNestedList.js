@@ -15,7 +15,7 @@ import getInversedElasticity from "../helperFunctions/getInversedElasticity";
 import getElasticity from "../helperFunctions/getElasticity";
 import isNumber from "../helperFunctions/isNumber";
 
-const minRefreshDistance = 40;
+const minRefreshDistance = 50;
 const scrollAnimationTiming = 150;
 const TOP = "TOP";
 const BOTTOM = "BOTTOM";

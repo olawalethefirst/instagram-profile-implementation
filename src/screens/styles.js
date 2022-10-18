@@ -1,9 +1,12 @@
 import { StyleSheet } from "react-native";
-import { colorBlack, colorWhite } from "../constants";
+import { colorBlack, colorWhite, deviceFont } from "../constants";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colorBlack,
+  },
+  backgroundColorBlack: {
     backgroundColor: colorBlack,
   },
   justifyContentCenter: {
@@ -33,6 +36,9 @@ const styles = StyleSheet.create({
   nestedListContentContainerStyle: {
     flexDirection: "row",
     flexWrap: "wrap",
+  },
+  devicefontStyle: {
+    fontFamily: deviceFont,
   },
 });
 

@@ -3,7 +3,7 @@ import ProfilePicture from "./ProfilePicture";
 import ProfileDetailsDuos from "./ProfileDetailsDuos";
 import styles from "./styles";
 
-function ProfileScreenRow0() {
+function ProfileScreenBio() {
   return (
     <View style={styles.containerHorizontalMargin}>
       <View
@@ -38,4 +38,4 @@ function ProfileScreenRow0() {
   );
 }
 
-export default ProfileScreenRow0;
+export default ProfileScreenBio;

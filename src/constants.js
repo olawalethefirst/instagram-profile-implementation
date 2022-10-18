@@ -1,5 +1,5 @@
 import Constants from "expo-constants";
-import { Dimensions, Platform } from "react-native";
+import { Dimensions, Platform, PixelRatio } from "react-native";
 
 // boolean
 export const isIOS = Platform.OS === "ios";
@@ -11,7 +11,8 @@ export const Reels = "Reels";
 export const Activity = "Activity";
 export const Profile = "Profile";
 export const ProfileFeed = "ProfileFeed";
-export const ViewPost = "ViewPost";
+export const ViewProfilePost = "ViewProfilePost";
+export const username = "olawalethefirst";
 
 export const deviceFont = Platform.select({
   ios: "HelveticaNeue-Bold",
@@ -36,3 +37,6 @@ export const headerwithStatusBarHeight = headerHeight + statusBarHeight;
 export const activeOpacity = 0.7;
 export const postItemSize = (width - 2) / 3;
 export const postItemMargin = 1;
+export const dpr = PixelRatio.get();
+export const storySize = 56;
+export const storyContainerSize = 66;

@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import styles from "./styles";
-import PlusIcon2 from "../SVG/PlusIcon2";
+import PlusIcon2 from "../svg/PlusIcon2";
 import TextButton from "./TextButton";
 import ProfileImage from "./ProfileImage";
 

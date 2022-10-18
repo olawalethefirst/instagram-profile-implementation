@@ -2,8 +2,8 @@ import PropTypes from "prop-types";
 import { runOnJS, useAnimatedReaction } from "react-native-reanimated";
 import { useCallback, useState, memo } from "react";
 import { color757575, colorWhite } from "../constants";
-import TaggedPostsIcon from "../SVG/TaggedPostsIcon";
-import UserPostsIcon from "../SVG/UserPostsIcon";
+import TaggedPostsIcon from "../svg/TaggedPostsIcon";
+import UserPostsIcon from "../svg/UserPostsIcon";
 
 const pathColors = [color757575, colorWhite];
 
