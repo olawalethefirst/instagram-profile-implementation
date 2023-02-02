@@ -1,5 +1,5 @@
 # Instagram Profile Implementation
-A React Native implementation of the Instagram Profile Screen feed.
+A React Native implementation of the Instagram Profile Screen feed. I documented more about the process on [dev.to](https://dev.to/olawalethefirst/how-my-obsession-drove-me-to-re-engineer-a-different-type-of-flatlist-i-called-it-nestedlists-2i21)
 
 # Project Summary 
 The App is built by leveraging on a custom built list component called NestedLists. It illustrates concepts such as remote data fetching & manipulation, state management, and application navigation.
